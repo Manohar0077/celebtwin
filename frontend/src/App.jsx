@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Camera, ZapOff, RefreshCw, Sparkles,
-  Star, Trophy, Info, AlertCircle, Loader2, X
+  Star, Trophy, Info, AlertCircle, Loader2, X, CheckCircle2
 } from 'lucide-react'
 
 // ─── constants ────────────────────────────────────────────────
@@ -734,8 +734,11 @@ function CameraPanel({ onMatch }) {
     setScanProgress(100)
 
     const files = capturedBlobs.map((blob, idx) => new File([blob], `snap_${idx + 1}.jpg`, { type: 'image/jpeg' }))
-    await onMatch(files, primarySnapUrl)
-    setScanning(false)
+    try {
+      await onMatch(files, primarySnapUrl)
+    } finally {
+      setScanning(false)
+    }
   }
 
   return (
@@ -786,17 +789,19 @@ function CameraPanel({ onMatch }) {
             <div
               className={`w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none relative overflow-hidden ${
                 scanning
-                  ? 'border-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.7),0_0_0_2000px_rgba(4,4,8,0.48)]'
+                  ? scanProgress >= 100
+                    ? 'border-emerald-400 shadow-[0_0_35px_rgba(52,211,153,0.6),0_0_0_2000px_rgba(4,4,8,0.48)]'
+                    : 'border-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.7),0_0_0_2000px_rgba(4,4,8,0.48)]'
                   : 'border-violet-400/70 shadow-[0_0_0_2000px_rgba(4,4,8,0.38)]'
               }`}
               style={{
                 borderRadius: '50%',
                 borderWidth: '2.5px',
-                borderStyle: scanning ? 'solid' : 'dashed',
+                borderStyle: scanning && scanProgress < 100 ? 'solid' : (scanProgress >= 100 ? 'solid' : 'dashed'),
               }}
             >
-              {/* Smooth animated laser scanning beam */}
-              {scanning && (
+              {/* Smooth animated laser scanning beam - stops immediately when scanProgress is 100% */}
+              {scanning && scanProgress < 100 && (
                 <motion.div
                   initial={{ top: '5%' }}
                   animate={{ top: ['5%', '92%', '5%'] }}
@@ -813,12 +818,27 @@ function CameraPanel({ onMatch }) {
               <motion.div
                 initial={{ scale: 0.92, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/85 border border-cyan-400/60 backdrop-blur-md shadow-xl shadow-cyan-500/25"
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md shadow-xl transition-all ${
+                  scanProgress >= 100
+                    ? 'bg-emerald-950/85 border border-emerald-400/60 shadow-emerald-500/25'
+                    : 'bg-cyan-950/85 border border-cyan-400/60 shadow-cyan-500/25'
+                }`}
               >
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                <span className="text-cyan-200 text-xs font-bold tracking-wider uppercase">
-                  Scanning Face • Stay Still
-                </span>
+                {scanProgress >= 100 ? (
+                  <>
+                    <CheckCircle2 size={13} className="text-emerald-400" />
+                    <span className="text-emerald-200 text-xs font-bold tracking-wider uppercase">
+                      Scan Complete • Finding Twin
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                    <span className="text-cyan-200 text-xs font-bold tracking-wider uppercase">
+                      Scanning Face • Stay Still
+                    </span>
+                  </>
+                )}
               </motion.div>
             ) : (
               <span className="text-[11px] sm:text-xs text-white/70 bg-black/50 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10">
@@ -837,12 +857,18 @@ function CameraPanel({ onMatch }) {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center gap-2 bg-[#090914]/90 border border-cyan-500/30 backdrop-blur-md px-6 py-3.5 rounded-2xl shadow-2xl w-full max-w-xs"
+              className={`flex flex-col items-center gap-2 bg-[#090914]/90 border backdrop-blur-md px-6 py-3.5 rounded-2xl shadow-2xl w-full max-w-xs transition-colors ${
+                scanProgress >= 100 ? 'border-emerald-500/40 shadow-emerald-500/20' : 'border-cyan-500/30'
+              }`}
             >
               <div className="flex items-center justify-between w-full text-xs font-bold">
-                <span className="text-cyan-300 flex items-center gap-1.5">
-                  <Sparkles size={13} className="animate-spin text-cyan-400" />
-                  Scanning Facial Features…
+                <span className={`flex items-center gap-1.5 ${scanProgress >= 100 ? 'text-emerald-300' : 'text-cyan-300'}`}>
+                  {scanProgress >= 100 ? (
+                    <CheckCircle2 size={13} className="text-emerald-400" />
+                  ) : (
+                    <Sparkles size={13} className="animate-spin text-cyan-400" />
+                  )}
+                  {scanProgress >= 100 ? 'Scan Complete! Finding Matches…' : 'Scanning Facial Features…'}
                 </span>
                 <span className="text-white font-mono text-sm">{scanProgress}%</span>
               </div>
@@ -853,13 +879,15 @@ function CameraPanel({ onMatch }) {
                   className="h-full rounded-full"
                   style={{
                     width: `${scanProgress}%`,
-                    background: 'linear-gradient(90deg, #22d3ee, #a855f7, #ec4899)'
+                    background: scanProgress >= 100
+                      ? 'linear-gradient(90deg, #10b981, #059669)'
+                      : 'linear-gradient(90deg, #22d3ee, #a855f7, #ec4899)'
                   }}
                 />
               </div>
 
               <p className="text-[10px] text-slate-400 text-center font-medium">
-                Mapping facial geometry &amp; contours
+                {scanProgress >= 100 ? 'Analyzing 512-D facial geometry…' : 'Mapping facial geometry & contours'}
               </p>
             </motion.div>
           ) : (
