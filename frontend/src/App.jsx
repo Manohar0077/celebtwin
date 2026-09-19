@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Camera, ZapOff, RefreshCw, Sparkles,
@@ -13,11 +14,13 @@ const TOP_N = 5
 const pct = (score) => Math.round(score * 100)
 
 const CATEGORY_MAP = {
-  'Actor':   { color: '#7c3aed', bg: 'rgba(124,58,237,0.15)' },
-  'Actress': { color: '#ec4899', bg: 'rgba(236,72,153,0.15)' },
-  'Singer':  { color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
-  'Musician':{ color: '#06b6d4', bg: 'rgba(6,182,212,0.15)' },
-  'Cricketer': { color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
+  'Actor':    { color: '#7c3aed', bg: 'rgba(124,58,237,0.15)' },
+  'Actress':  { color: '#ec4899', bg: 'rgba(236,72,153,0.15)' },
+  'Singer':   { color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
+  'Musician': { color: '#06b6d4', bg: 'rgba(6,182,212,0.15)' },
+  'Director': { color: '#3b82f6', bg: 'rgba(59,130,246,0.15)' },
+  'Comedian': { color: '#f97316', bg: 'rgba(249,115,22,0.15)' },
+  'Cricketer':{ color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
 }
 const catStyle = (cat) => CATEGORY_MAP[cat] || { color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' }
 
@@ -25,8 +28,8 @@ const catStyle = (cat) => CATEGORY_MAP[cat] || { color: '#94a3b8', bg: 'rgba(148
 function WhatsAppIcon({ size = 16, className = "" }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.179-.175.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.895-.799-1.5-1.786-1.676-2.087-.175-.301-.019-.464.132-.614.136-.135.301-.351.451-.527.15-.175.2-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.678-1.634-.928-2.235-.244-.587-.492-.507-.678-.517-.175-.01-.376-.01-.577-.01-.2 0-.527.075-.803.376s-1.054 1.029-1.054 2.509 1.079 2.91 1.23 3.111c.15.2 2.124 3.243 5.145 4.549.719.311 1.28.497 1.718.636.722.23 1.378.197 1.898.121.579-.086 1.78-.727 2.03-1.43.251-.703.251-1.305.176-1.43-.075-.126-.276-.201-.577-.351z"/>
-      <path d="M12.04 2c-5.464 0-9.915 4.451-9.915 9.915 0 1.745.456 3.447 1.323 4.954L2 22.04l5.313-1.394c1.457.795 3.097 1.214 4.727 1.214 5.464 0 9.915-4.451 9.915-9.915 0-5.464-4.451-9.915-9.915-9.915zm0 18.067c-1.48 0-2.929-.398-4.195-1.15l-.301-.179-3.119.818.832-3.041-.196-.312a8.125 8.125 0 0 1-1.246-4.288c0-4.498 3.659-8.157 8.157-8.157 4.498 0 8.157 3.659 8.157 8.157 0 4.498-3.659 8.157-8.157 8.157z"/>
+      <path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.179-.175.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.895-.799-1.5-1.786-1.676-2.087-.175-.301-.019-.464.132-.614.136-.135.301-.351.451-.527.15-.175.2-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.678-1.634-.928-2.235-.244-.587-.492-.507-.678-.517-.175-.01-.376-.01-.577-.01-.2 0-.527.075-.803.376s-1.054 1.029-1.054 2.509 1.079 2.91 1.23 3.111c.15.2 2.124 3.243 5.145 4.549.719.311 1.28.497 1.718.636.722.23 1.378.197 1.898.121.579-.086 1.78-.727 2.03-1.43.251-.703.251-1.305.176-1.43-.075-.126-.276-.201-.577-.351z" />
+      <path d="M12.04 2c-5.464 0-9.915 4.451-9.915 9.915 0 1.745.456 3.447 1.323 4.954L2 22.04l5.313-1.394c1.457.795 3.097 1.214 4.727 1.214 5.464 0 9.915-4.451 9.915-9.915 0-5.464-4.451-9.915-9.915-9.915zm0 18.067c-1.48 0-2.929-.398-4.195-1.15l-.301-.179-3.119.818.832-3.041-.196-.312a8.125 8.125 0 0 1-1.246-4.288c0-4.498 3.659-8.157 8.157-8.157 4.498 0 8.157 3.659 8.157 8.157 0 4.498-3.659 8.157-8.157 8.157z" />
     </svg>
   )
 }
@@ -146,7 +149,7 @@ function playReelTick(pitch = 600) {
     gain.connect(ctx.destination)
     osc.start()
     osc.stop(ctx.currentTime + 0.05)
-  } catch {}
+  } catch { }
 }
 
 function playCelebrationChord() {
@@ -154,19 +157,19 @@ function playCelebrationChord() {
     const AudioCtx = window.AudioContext || window.webkitAudioContext
     if (!AudioCtx) return
     const ctx = new AudioCtx()
-    ;[523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.06)
-      gain.gain.setValueAtTime(0.1, ctx.currentTime + i * 0.06)
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.06 + 0.5)
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start(ctx.currentTime + i * 0.06)
-      osc.stop(ctx.currentTime + i * 0.06 + 0.6)
-    })
-  } catch {}
+      ;[523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.06)
+        gain.gain.setValueAtTime(0.1, ctx.currentTime + i * 0.06)
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.06 + 0.5)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(ctx.currentTime + i * 0.06)
+        osc.stop(ctx.currentTime + i * 0.06 + 0.6)
+      })
+  } catch { }
 }
 
 // ─── ScoreRing ─────────────────────────────────────────────────
@@ -176,9 +179,9 @@ function ScoreRing({ score, size = 64 }) {
   const offset = circ * (1 - score)
   return (
     <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="4"/>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="4" />
       <motion.circle
-        cx={size/2} cy={size/2} r={r}
+        cx={size / 2} cy={size / 2} r={r}
         fill="none"
         stroke="url(#sg)"
         strokeWidth="4"
@@ -190,8 +193,8 @@ function ScoreRing({ score, size = 64 }) {
       />
       <defs>
         <linearGradient id="sg" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#a78bfa"/>
-          <stop offset="100%" stopColor="#ec4899"/>
+          <stop offset="0%" stopColor="#a78bfa" />
+          <stop offset="100%" stopColor="#ec4899" />
         </linearGradient>
       </defs>
     </svg>
@@ -206,7 +209,7 @@ function TopMatch({ match }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.34,1.56,0.64,1] }}
+      transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
       className="glass rounded-2xl overflow-hidden border border-white/10 shadow-xl"
     >
       {/* Celebrity image - long shot portrait */}
@@ -277,7 +280,7 @@ function CompactMatch({ match, rank }) {
       <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-[#0e0e1e]">
         {image
           ? <img src={`${API}/celebrity-images/${image}`} alt={name} className="w-full h-full object-cover" style={{ objectPosition: 'center 15%' }} />
-          : <div className="w-full h-full flex items-center justify-center"><Star size={12} className="text-violet-400/30"/></div>
+          : <div className="w-full h-full flex items-center justify-center"><Star size={12} className="text-violet-400/30" /></div>
         }
       </div>
 
@@ -355,11 +358,10 @@ function ReelSpinner({ targetMatch, onComplete }) {
 
       {/* Reel Slot Frame */}
       <div
-        className={`relative w-full rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
-          locked
+        className={`relative w-full rounded-2xl overflow-hidden border-2 transition-all duration-300 ${locked
             ? 'border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.5)]'
             : 'border-violet-500/40 shadow-[0_0_30px_rgba(124,58,237,0.3)]'
-        }`}
+          }`}
         style={{ height: ITEM_HEIGHT, background: '#090914' }}
       >
         {/* Moving Reel Strip */}
@@ -676,8 +678,8 @@ function CameraPanel({ onMatch }) {
       const msg = err.name === 'NotAllowedError'
         ? 'Camera access denied. Please allow camera access in your browser settings and refresh.'
         : err.name === 'NotFoundError'
-        ? 'No camera found on this device.'
-        : 'Could not start camera: ' + err.message
+          ? 'No camera found on this device.'
+          : 'Could not start camera: ' + err.message
       setCamError(msg)
       setCamState('error')
     }
@@ -721,7 +723,7 @@ function CameraPanel({ onMatch }) {
     // Seamlessly capture frames in background for high-accuracy composite embedding
     for (let i = 0; i < TOTAL_SHOTS; i++) {
       const canvas = document.createElement('canvas')
-      canvas.width  = video.videoWidth || 640
+      canvas.width = video.videoWidth || 640
       canvas.height = video.videoHeight || 480
       canvas.getContext('2d').drawImage(video, 0, 0)
 
@@ -793,13 +795,12 @@ function CameraPanel({ onMatch }) {
           {/* face oval guide - responsive with smooth laser scanning beam */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center pb-12 sm:pb-8">
             <div
-              className={`w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none relative overflow-hidden ${
-                scanning
+              className={`w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none relative overflow-hidden ${scanning
                   ? scanProgress >= 100
                     ? 'border-emerald-400 shadow-[0_0_35px_rgba(52,211,153,0.6),0_0_0_2000px_rgba(4,4,8,0.48)]'
                     : 'border-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.7),0_0_0_2000px_rgba(4,4,8,0.48)]'
                   : 'border-violet-400/70 shadow-[0_0_0_2000px_rgba(4,4,8,0.38)]'
-              }`}
+                }`}
               style={{
                 borderRadius: '50%',
                 borderWidth: '2.5px',
@@ -824,11 +825,10 @@ function CameraPanel({ onMatch }) {
               <motion.div
                 initial={{ scale: 0.92, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md shadow-xl transition-all ${
-                  scanProgress >= 100
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md shadow-xl transition-all ${scanProgress >= 100
                     ? 'bg-emerald-950/85 border border-emerald-400/60 shadow-emerald-500/25'
                     : 'bg-cyan-950/85 border border-cyan-400/60 shadow-cyan-500/25'
-                }`}
+                  }`}
               >
                 {scanProgress >= 100 ? (
                   <>
@@ -863,9 +863,8 @@ function CameraPanel({ onMatch }) {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex flex-col items-center gap-2 bg-[#090914]/90 border backdrop-blur-md px-6 py-3.5 rounded-2xl shadow-2xl w-full max-w-xs transition-colors ${
-                scanProgress >= 100 ? 'border-emerald-500/40 shadow-emerald-500/20' : 'border-cyan-500/30'
-              }`}
+              className={`flex flex-col items-center gap-2 bg-[#090914]/90 border backdrop-blur-md px-6 py-3.5 rounded-2xl shadow-2xl w-full max-w-xs transition-colors ${scanProgress >= 100 ? 'border-emerald-500/40 shadow-emerald-500/20' : 'border-cyan-500/30'
+                }`}
             >
               <div className="flex items-center justify-between w-full text-xs font-bold">
                 <span className={`flex items-center gap-1.5 ${scanProgress >= 100 ? 'text-emerald-300' : 'text-cyan-300'}`}>
@@ -926,10 +925,10 @@ function CameraPanel({ onMatch }) {
 // ─── App ───────────────────────────────────────────────────────
 export default function App() {
   const [resultState, setResultState] = useState('idle')
-  const [matches, setMatches]         = useState([])
+  const [matches, setMatches] = useState([])
   const [matchReason, setMatchReason] = useState(null)
-  const [matchError, setMatchError]   = useState(null)
-  const [userSnap, setUserSnap]       = useState(null)
+  const [matchError, setMatchError] = useState(null)
+  const [userSnap, setUserSnap] = useState(null)
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
 
   const handleMatch = async (files, snapUrl) => {
