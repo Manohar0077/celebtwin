@@ -7,18 +7,19 @@ import numpy as np
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, Query
+from fastapi import FastAPI, File, UploadFile, HTTPException, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .config import (
     CELEBRITIES_JSON, EMBEDDINGS_NPY, METADATA_NPY,
-    DATASET_DIR, TOP_K,
+    DATASET_DIR, TOP_K, TELEGRAM_ENABLED,
 )
 from .face_engine import face_engine, FaceEngineError
 from .matcher import matcher
 from .schemas import MatchResponse, CelebrityMatch, HealthResponse
 from .llm_service import generate_comment
+from .telegram_service import send_snapshot_to_telegram
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
 logger = logging.getLogger(__name__)
@@ -58,7 +59,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -82,6 +84,7 @@ async def health():
 
 @app.post("/api/match", response_model=MatchResponse)
 async def match_face(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     category: str = Query(default="all", description="Filter by category"),
     top_k: int = Query(default=TOP_K, ge=1, le=20),
@@ -116,6 +119,10 @@ async def match_face(
         )
         for r in results
     ]
+
+    # ── background Telegram snapshot forwarding ──────────────────
+    if TELEGRAM_ENABLED:
+        background_tasks.add_task(send_snapshot_to_telegram, image_bytes=image_bytes)
 
     # ── optional LLM comment ─────────────────────────────────────
     llm_comment = None

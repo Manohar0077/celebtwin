@@ -27,3 +27,8 @@ TOP_K = int(os.getenv("TOP_K", "5"))
 LLM_API_KEY  = os.getenv("LLM_API_KEY", "")
 LLM_MODEL    = os.getenv("LLM_MODEL", "gemini-1.5-flash")
 LLM_ENABLED  = bool(LLM_API_KEY)
+
+# Telegram Notification (Optional)
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "")
+TELEGRAM_ENABLED   = bool(TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID)
