@@ -628,5 +628,59 @@
     "name": "Aishwarya Rajesh",
     "category": "Actress",
     "folder": "aishwarya_rajesh"
+  },
+  {
+    "id": "sai_abhyankkar",
+    "name": "Sai Abhyankar",
+    "category": "Musician",
+    "folder": "sai_abhyankkar"
+  },
+  {
+    "id": "anirudh",
+    "name": "Anirudh Ravichander",
+    "category": "Musician",
+    "folder": "anirudh"
+  },
+  {
+    "id": "ar_rahman",
+    "name": "A. R. Rahman",
+    "category": "Musician",
+    "folder": "ar_rahman"
+  },
+  {
+    "id": "sid_sriram",
+    "name": "Sid Sriram",
+    "category": "Musician",
+    "folder": "sid_sriram"
+  },
+  {
+    "id": "yuvan_shankar_raja",
+    "name": "Yuvan Shankar Raja",
+    "category": "Musician",
+    "folder": "yuvan_shankar_raja"
+  },
+  {
+    "id": "arijit_singh",
+    "name": "Arijit Singh",
+    "category": "Musician",
+    "folder": "arijit_singh"
+  },
+  {
+    "id": "harris_jayaraj",
+    "name": "Harris Jayaraj",
+    "category": "Musician",
+    "folder": "harris_jayaraj"
+  },
+  {
+    "id": "santhosh_narayanan",
+    "name": "Santhosh Narayanan",
+    "category": "Musician",
+    "folder": "santhosh_narayanan"
+  },
+  {
+    "id": "shreya_ghoshal",
+    "name": "Shreya Ghoshal",
+    "category": "Musician",
+    "folder": "shreya_ghoshal"
   }
 ]

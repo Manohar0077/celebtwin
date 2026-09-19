@@ -16,6 +16,7 @@ const CATEGORY_MAP = {
   'Actor':   { color: '#7c3aed', bg: 'rgba(124,58,237,0.15)' },
   'Actress': { color: '#ec4899', bg: 'rgba(236,72,153,0.15)' },
   'Singer':  { color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
+  'Musician':{ color: '#06b6d4', bg: 'rgba(6,182,212,0.15)' },
   'Cricketer': { color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
 }
 const catStyle = (cat) => CATEGORY_MAP[cat] || { color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' }
@@ -120,8 +121,13 @@ const CELEB_POOL = [
   { name: 'Ranbir Kapoor', image: 'ranbir_kapoor/1.jpg', category: 'Actor' },
   { name: 'Ranveer Singh', image: 'ranveer_singh/1.jpg', category: 'Actor' },
   { name: 'Hrithik Roshan', image: 'hrithik_roshan/1.jpg', category: 'Actor' },
-  { name: 'Katrina Kaif', image: 'katrina_kaif/1.jpg', category: 'Actress' },
-  { name: 'Priyanka Chopra', image: 'priyanka_chopra/1.jpg', category: 'Actress' },
+  // Music Stars
+  { name: 'Sai Abhyankar', image: 'sai_abhyankkar/2.jpg', category: 'Musician' },
+  { name: 'Anirudh Ravichander', image: 'anirudh/6.jpg', category: 'Musician' },
+  { name: 'A. R. Rahman', image: 'ar_rahman/1.jpg', category: 'Musician' },
+  { name: 'Sid Sriram', image: 'sid_sriram/1.jpg', category: 'Musician' },
+  { name: 'Yuvan Shankar Raja', image: 'yuvan_shankar_raja/1.jpg', category: 'Musician' },
+  { name: 'Arijit Singh', image: 'arijit_singh/4.jpg', category: 'Musician' },
 ]
 
 // ─── sound synthesizers (Web Audio API) ─────────────────────────
