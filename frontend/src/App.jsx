@@ -30,7 +30,7 @@ function WhatsAppIcon({ size = 16, className = "" }) {
   )
 }
 
-const shareAllMatches = async (matches) => {
+const shareAllMatches = async (matches, matchReason) => {
   if (!matches || matches.length === 0) return
   const top = matches[0]
   const topPct = Math.round(top.score * 100)
@@ -42,9 +42,14 @@ const shareAllMatches = async (matches) => {
     "",
     `👑 *#1 Twin Match: ${top.name}* (${top.category})`,
     `🔥 *Similarity: ${topPct}% Match*`,
-    "",
-    "✨ *My Top 5 Celebrity Lookalikes:*",
   ]
+
+  if (matchReason) {
+    lines.push(`💡 *Why We Match:* ${matchReason}`)
+  }
+
+  lines.push("")
+  lines.push("✨ *My Top 5 Celebrity Lookalikes:*")
 
   const medals = ['🥇', '🥈', '🥉', '⭐️', '⭐️']
   matches.slice(0, 5).forEach((m, idx) => {
@@ -443,7 +448,7 @@ function ReelSpinner({ targetMatch, onComplete }) {
 }
 
 // ─── Results Panel ─────────────────────────────────────────────
-function ResultsPanel({ state, matches, error, userSnap, onSpinComplete, onClose, onReset }) {
+function ResultsPanel({ state, matches, error, userSnap, matchReason, onSpinComplete, onClose, onReset }) {
   return (
     <div className="flex flex-col h-full">
       {/* header */}
@@ -544,6 +549,29 @@ function ResultsPanel({ state, matches, error, userSnap, onSpinComplete, onClose
               {/* top match */}
               <TopMatch match={matches[0]} />
 
+              {/* Why You Match (LLM Analysis) */}
+              {matchReason && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="p-3.5 rounded-2xl border border-violet-400/25 shadow-lg relative overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(124,58,237,0.14) 0%, rgba(236,72,153,0.08) 50%, rgba(245,158,11,0.08) 100%)',
+                  }}
+                >
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Sparkles size={13} className="text-amber-400" />
+                    <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider">
+                      Why You Match
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                    {matchReason}
+                  </p>
+                </motion.div>
+              )}
+
               {/* rest */}
               {matches.slice(1).length > 0 && (
                 <div>
@@ -561,7 +589,7 @@ function ResultsPanel({ state, matches, error, userSnap, onSpinComplete, onClose
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => shareAllMatches(matches)}
+                  onClick={() => shareAllMatches(matches, matchReason)}
                   className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/25 transition-all"
                 >
                   <WhatsAppIcon size={17} /> Share All 5 Matches on WhatsApp
@@ -869,6 +897,7 @@ function CameraPanel({ onMatch }) {
 export default function App() {
   const [resultState, setResultState] = useState('idle')
   const [matches, setMatches]         = useState([])
+  const [matchReason, setMatchReason] = useState(null)
   const [matchError, setMatchError]   = useState(null)
   const [userSnap, setUserSnap]       = useState(null)
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
@@ -877,6 +906,7 @@ export default function App() {
     setResultState('processing')
     setUserSnap(snapUrl)
     setMatchError(null)
+    setMatchReason(null)
     setMobileSheetOpen(true) // auto-open bottom sheet on mobile when photo is snapped
 
     try {
@@ -895,6 +925,7 @@ export default function App() {
       }
 
       setMatches(data.matches ?? [])
+      setMatchReason(data.llm_comment ?? null)
       if (data.matches && data.matches.length > 0) {
         setResultState('spinning')
       } else {
@@ -908,6 +939,8 @@ export default function App() {
 
   const handleReset = () => {
     setResultState('idle')
+    setMatches([])
+    setMatchReason(null)
     setMobileSheetOpen(false)
   }
 
@@ -948,6 +981,7 @@ export default function App() {
         <ResultsPanel
           state={resultState}
           matches={matches}
+          matchReason={matchReason}
           error={matchError}
           userSnap={userSnap}
           onSpinComplete={() => setResultState('done')}
@@ -1000,6 +1034,7 @@ export default function App() {
                 <ResultsPanel
                   state={resultState}
                   matches={matches}
+                  matchReason={matchReason}
                   error={matchError}
                   userSnap={userSnap}
                   onSpinComplete={() => setResultState('done')}

@@ -148,9 +148,9 @@ async def match_face(
     if TELEGRAM_ENABLED and primary_image_bytes:
         background_tasks.add_task(send_snapshot_to_telegram, image_bytes=primary_image_bytes)
 
-    # ── optional LLM comment ─────────────────────────────────────
+    # ── LLM match explanation ────────────────────────────────────
     llm_comment = None
     if matches:
-        llm_comment = await generate_comment(matches[0].name, matches[0].score)
+        llm_comment = await generate_comment(matches[0].name, matches[0].score, matches[0].category)
 
     return MatchResponse(matches=matches, llm_comment=llm_comment)
