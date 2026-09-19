@@ -590,9 +590,9 @@ function ResultsPanel({ state, matches, error, userSnap, matchReason, onSpinComp
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => shareAllMatches(matches, matchReason)}
-                  className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/25 transition-all"
+                  className="w-full h-13 sm:h-14 py-3.5 px-5 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/30 active:scale-98 transition-all"
                 >
-                  <WhatsAppIcon size={17} /> Share All 5 Matches on WhatsApp
+                  <WhatsAppIcon size={20} /> Share All 5 Matches on WhatsApp
                 </motion.button>
 
                 {onReset && (
