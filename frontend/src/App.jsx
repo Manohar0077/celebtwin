@@ -56,10 +56,6 @@ const shareAllMatches = async (matches, matchReason) => {
     lines.push(`${medals[idx]} ${idx + 1}. ${m.name} — ${Math.round(m.score * 100)}%`)
   })
 
-  if (heroImageUrl) {
-    lines.push("")
-    lines.push(`📸 *${top.name}'s Photo:* ${heroImageUrl}`)
-  }
   lines.push("")
   lines.push(`👉 Find your celebrity twin here: ${appUrl}`)
 
