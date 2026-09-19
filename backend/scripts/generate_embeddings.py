@@ -39,7 +39,11 @@ def pick_display_image(folder: Path) -> str | None:
 
 def compute_celebrity_embedding(folder: Path) -> tuple[np.ndarray | None, str | None]:
     """
-    Process all images in a celebrity folder.
+    Process all images in a celebrity folder using quality-filtered face detection.
+    - Skips group photos (multiple faces with no dominant one)
+    - Skips very small faces (< 65px)
+    - Skips low-confidence detections (< 0.70)
+    - Picks the highest-quality face image as the display image
     Returns (averaged_embedding, display_image_path) or (None, None).
     """
     images = [f for f in sorted(folder.iterdir()) if f.suffix.lower() in IMAGE_EXTS]
@@ -48,16 +52,18 @@ def compute_celebrity_embedding(folder: Path) -> tuple[np.ndarray | None, str | 
         return None, None
 
     embeddings = []
-    display_image = None
+    best_display = None
+    best_quality = 0.0
 
     for img_path in images:
-        emb = face_engine.embedding_from_file(str(img_path))
+        emb, quality = face_engine.get_clear_face_embedding(str(img_path), min_dim=65, min_det_score=0.70)
         if emb is not None:
             embeddings.append(emb)
-            if display_image is None:
-                display_image = f"{folder.name}/{img_path.name}"
+            if quality > best_quality:
+                best_quality = quality
+                best_display = f"{folder.name}/{img_path.name}"
         else:
-            logger.debug("  Skipped %s (no single face)", img_path.name)
+            logger.debug("  Skipped %s (no clear single face)", img_path.name)
 
     if not embeddings:
         logger.warning("  No usable faces found in %s", folder.name)
@@ -70,8 +76,8 @@ def compute_celebrity_embedding(folder: Path) -> tuple[np.ndarray | None, str | 
         return None, None
     averaged = avg / norm
 
-    logger.info("  ✓ %d/%d images used, display=%s", len(embeddings), len(images), display_image)
-    return averaged, display_image
+    logger.info("  ✓ %d/%d images used, display=%s", len(embeddings), len(images), best_display)
+    return averaged, best_display
 
 
 def main():

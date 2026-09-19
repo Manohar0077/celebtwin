@@ -104,7 +104,7 @@ class FaceEngine:
     def get_clear_face_embedding(
         self,
         path: str,
-        min_dim: int = 85,
+        min_dim: int = 65,
         min_det_score: float = 0.70,
     ) -> tuple[Optional[np.ndarray], float]:
         """
