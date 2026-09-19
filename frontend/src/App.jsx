@@ -628,23 +628,26 @@ function CameraPanel({ onMatch }) {
     if (!video || scanning) return
     setScanning(true)
     setScanProgress(0)
-    setScanCount(0)
 
     const TOTAL_SHOTS = 5
-    const TOTAL_TIME_MS = 2500
-    const INTERVAL_MS = TOTAL_TIME_MS / TOTAL_SHOTS // 500ms
+    const TOTAL_TIME_MS = 2400
+    const INTERVAL_MS = TOTAL_TIME_MS / TOTAL_SHOTS
 
     const capturedBlobs = []
     let primarySnapUrl = null
 
-    // Continuous progress timer from 0% -> 100% over 2.5s
+    // Play subtle high-tech scanning tone at start
+    playReelTick(680)
+
+    // Smooth continuous progress timer from 0% -> 100%
     const startTime = Date.now()
     const progressTimer = setInterval(() => {
       const elapsed = Date.now() - startTime
       const p = Math.min(99, Math.round((elapsed / TOTAL_TIME_MS) * 100))
       setScanProgress(p)
-    }, 40)
+    }, 35)
 
+    // Seamlessly capture frames in background for high-accuracy composite embedding
     for (let i = 0; i < TOTAL_SHOTS; i++) {
       const canvas = document.createElement('canvas')
       canvas.width  = video.videoWidth || 640
@@ -654,14 +657,8 @@ function CameraPanel({ onMatch }) {
       const snapUrl = canvas.toDataURL('image/jpeg', 0.92)
       if (i === 0) primarySnapUrl = snapUrl
 
-      // Auditory click & visual shutter flash
-      playReelTick(520 + i * 45)
-      setScanFlash(true)
-      setTimeout(() => setScanFlash(false), 85)
-
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92))
       capturedBlobs.push(blob)
-      setScanCount(i + 1)
 
       if (i < TOTAL_SHOTS - 1) {
         await new Promise(resolve => setTimeout(resolve, INTERVAL_MS))
@@ -719,12 +716,12 @@ function CameraPanel({ onMatch }) {
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse 60% 70% at 50% 40%, transparent 40%, rgba(4,4,8,0.6) 100%)' }} />
 
-          {/* face oval guide - responsive with active laser scanning sweep */}
+          {/* face oval guide - responsive with smooth laser scanning beam */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center pb-12 sm:pb-8">
             <div
               className={`w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none relative overflow-hidden ${
                 scanning
-                  ? 'border-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.7),0_0_0_2000px_rgba(4,4,8,0.45)]'
+                  ? 'border-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.7),0_0_0_2000px_rgba(4,4,8,0.48)]'
                   : 'border-violet-400/70 shadow-[0_0_0_2000px_rgba(4,4,8,0.38)]'
               }`}
               style={{
@@ -733,13 +730,13 @@ function CameraPanel({ onMatch }) {
                 borderStyle: scanning ? 'solid' : 'dashed',
               }}
             >
-              {/* Laser scanning beam */}
+              {/* Smooth animated laser scanning beam */}
               {scanning && (
                 <motion.div
                   initial={{ top: '5%' }}
                   animate={{ top: ['5%', '92%', '5%'] }}
-                  transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute left-2 right-2 h-1 bg-cyan-300 shadow-[0_0_15px_#22d3ee] rounded-full pointer-events-none"
+                  transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute left-2 right-2 h-1 bg-cyan-300 shadow-[0_0_16px_#22d3ee] rounded-full pointer-events-none"
                 />
               )}
             </div>
@@ -749,13 +746,13 @@ function CameraPanel({ onMatch }) {
           <div className="absolute top-14 sm:top-5 left-0 right-0 flex justify-center pointer-events-none z-20 px-4">
             {scanning ? (
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.92, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/85 border border-cyan-400/60 backdrop-blur-md shadow-xl shadow-cyan-500/25"
               >
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                <span className="text-cyan-200 text-xs font-black tracking-wider uppercase">
-                  Stay Still • Scanning Face
+                <span className="text-cyan-200 text-xs font-bold tracking-wider uppercase">
+                  Scanning Face • Stay Still
                 </span>
               </motion.div>
             ) : (
@@ -767,24 +764,11 @@ function CameraPanel({ onMatch }) {
         </>
       )}
 
-      {/* Shutter Camera Flash */}
-      <AnimatePresence>
-        {scanFlash && (
-          <motion.div
-            initial={{ opacity: 0.7 }}
-            animate={{ opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-            className="absolute inset-0 bg-white pointer-events-none z-30"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Bottom Area: Controls or Scanning Progress HUD */}
+      {/* Bottom Area: Snap Button or Smooth Scanning Progress HUD */}
       {camState === 'live' && (
         <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 flex flex-col items-center z-20 px-6">
           {scanning ? (
-            /* Gradual Progress Loader HUD */
+            /* Futuristic Face Scan Progress HUD */
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -792,13 +776,13 @@ function CameraPanel({ onMatch }) {
             >
               <div className="flex items-center justify-between w-full text-xs font-bold">
                 <span className="text-cyan-300 flex items-center gap-1.5">
-                  <Camera size={13} className="animate-pulse text-cyan-400" />
-                  Burst {scanCount}/5 Photos
+                  <Sparkles size={13} className="animate-spin text-cyan-400" />
+                  Scanning Facial Features…
                 </span>
                 <span className="text-white font-mono text-sm">{scanProgress}%</span>
               </div>
 
-              {/* Progress bar */}
+              {/* Smooth Progress Bar */}
               <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
                 <motion.div
                   className="h-full rounded-full"
@@ -810,7 +794,7 @@ function CameraPanel({ onMatch }) {
               </div>
 
               <p className="text-[10px] text-slate-400 text-center font-medium">
-                Averaging 5 angles for highest accuracy
+                Mapping facial geometry &amp; contours
               </p>
             </motion.div>
           ) : (
@@ -821,7 +805,7 @@ function CameraPanel({ onMatch }) {
                 whileTap={{ scale: 0.95 }}
                 onClick={scanAndMatch}
                 className="relative touch-manipulation"
-                aria-label="Scan face and match"
+                aria-label="Scan face and find twin"
               >
                 <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full border-4 border-white/30 flex items-center justify-center">
                   <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full btn-primary flex items-center justify-center shadow-xl">
@@ -830,7 +814,7 @@ function CameraPanel({ onMatch }) {
                 </div>
               </motion.button>
               <p className="text-white/60 text-[11px] sm:text-xs font-medium tracking-wide">
-                Scan 5 Angles &amp; Match
+                Scan Face &amp; Find Twin
               </p>
             </div>
           )}
