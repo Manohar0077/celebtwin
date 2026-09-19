@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+*.env
+
+# InsightFace downloaded models (large, re-downloadable)
+# Uncomment if you want to skip committing them:
+# ~/.insightface/
+
+# Celebrity embeddings (small ~220KB precomputed database - needed for deployment)
+!backend/celebrity_data/embeddings.npy
+!backend/celebrity_data/metadata.npy
+!backend/celebrity_data/celebrities.json
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

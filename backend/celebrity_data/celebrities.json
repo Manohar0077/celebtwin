@@ -1,0 +1,632 @@
+[
+  {
+    "id": "ajith",
+    "name": "Ajith Kumar",
+    "category": "Actor",
+    "folder": "ajith"
+  },
+  {
+    "id": "ananthi",
+    "name": "Ananthi Ashok",
+    "category": "Actress",
+    "folder": "ananthi"
+  },
+  {
+    "id": "anushka",
+    "name": "Anushka Shetty",
+    "category": "Actress",
+    "folder": "anushka"
+  },
+  {
+    "id": "athmika",
+    "name": "Athulya Ravi",
+    "category": "Actress",
+    "folder": "athmika"
+  },
+  {
+    "id": "danush",
+    "name": "Dhanush",
+    "category": "Actor",
+    "folder": "danush"
+  },
+  {
+    "id": "gv",
+    "name": "G.V. Prakash Kumar",
+    "category": "Singer",
+    "folder": "gv"
+  },
+  {
+    "id": "karthi",
+    "name": "Karthi",
+    "category": "Actor",
+    "folder": "karthi"
+  },
+  {
+    "id": "keerthi",
+    "name": "Keerthy Suresh",
+    "category": "Actress",
+    "folder": "keerthi"
+  },
+  {
+    "id": "lavanya",
+    "name": "Lavanya Tripathi",
+    "category": "Actress",
+    "folder": "lavanya"
+  },
+  {
+    "id": "makeshbabu",
+    "name": "Mahesh Babu",
+    "category": "Actor",
+    "folder": "makeshbabu"
+  },
+  {
+    "id": "nayanthara",
+    "name": "Nayanthara",
+    "category": "Actress",
+    "folder": "nayanthara"
+  },
+  {
+    "id": "nazriya",
+    "name": "Nazriya Nazim",
+    "category": "Actress",
+    "folder": "nazriya"
+  },
+  {
+    "id": "nivin",
+    "name": "Nivin Pauly",
+    "category": "Actor",
+    "folder": "nivin"
+  },
+  {
+    "id": "prabas",
+    "name": "Prabhas",
+    "category": "Actor",
+    "folder": "prabas"
+  },
+  {
+    "id": "rajinikanth",
+    "name": "Rajinikanth",
+    "category": "Actor",
+    "folder": "rajinikanth"
+  },
+  {
+    "id": "ramcharan",
+    "name": "Ram Charan",
+    "category": "Actor",
+    "folder": "ramcharan"
+  },
+  {
+    "id": "saipallavi",
+    "name": "Sai Pallavi",
+    "category": "Actress",
+    "folder": "saipallavi"
+  },
+  {
+    "id": "samantha",
+    "name": "Samantha Ruth Prabhu",
+    "category": "Actress",
+    "folder": "samantha"
+  },
+  {
+    "id": "seneha",
+    "name": "Sneha",
+    "category": "Actress",
+    "folder": "seneha"
+  },
+  {
+    "id": "simran",
+    "name": "Simran Bagga",
+    "category": "Actress",
+    "folder": "simran"
+  },
+  {
+    "id": "sivakarthikeyan",
+    "name": "Sivakarthikeyan",
+    "category": "Actor",
+    "folder": "sivakarthikeyan"
+  },
+  {
+    "id": "surya",
+    "name": "Suriya",
+    "category": "Actor",
+    "folder": "surya"
+  },
+  {
+    "id": "trisha",
+    "name": "Trisha Krishnan",
+    "category": "Actress",
+    "folder": "trisha"
+  },
+  {
+    "id": "vijay",
+    "name": "Vijay",
+    "category": "Actor",
+    "folder": "vijay"
+  },
+  {
+    "id": "virat_kohli",
+    "name": "Virat Kohli",
+    "category": "Cricketer",
+    "folder": "virat_kohli"
+  },
+  {
+    "id": "ms_dhoni",
+    "name": "MS Dhoni",
+    "category": "Cricketer",
+    "folder": "ms_dhoni"
+  },
+  {
+    "id": "rohit_sharma",
+    "name": "Rohit Sharma",
+    "category": "Cricketer",
+    "folder": "rohit_sharma"
+  },
+  {
+    "id": "sachin_tendulkar",
+    "name": "Sachin Tendulkar",
+    "category": "Cricketer",
+    "folder": "sachin_tendulkar"
+  },
+  {
+    "id": "hardik_pandya",
+    "name": "Hardik Pandya",
+    "category": "Cricketer",
+    "folder": "hardik_pandya"
+  },
+  {
+    "id": "shubman_gill",
+    "name": "Shubman Gill",
+    "category": "Cricketer",
+    "folder": "shubman_gill"
+  },
+  {
+    "id": "jasprit_bumrah",
+    "name": "Jasprit Bumrah",
+    "category": "Cricketer",
+    "folder": "jasprit_bumrah"
+  },
+  {
+    "id": "ravindra_jadeja",
+    "name": "Ravindra Jadeja",
+    "category": "Cricketer",
+    "folder": "ravindra_jadeja"
+  },
+  {
+    "id": "rishabh_pant",
+    "name": "Rishabh Pant",
+    "category": "Cricketer",
+    "folder": "rishabh_pant"
+  },
+  {
+    "id": "shikhar_dhawan",
+    "name": "Shikhar Dhawan",
+    "category": "Cricketer",
+    "folder": "shikhar_dhawan"
+  },
+  {
+    "id": "yuvraj_singh",
+    "name": "Yuvraj Singh",
+    "category": "Cricketer",
+    "folder": "yuvraj_singh"
+  },
+  {
+    "id": "mohammed_shami",
+    "name": "Mohammed Shami",
+    "category": "Cricketer",
+    "folder": "mohammed_shami"
+  },
+  {
+    "id": "r_ashwin",
+    "name": "Ravichandran Ashwin",
+    "category": "Cricketer",
+    "folder": "r_ashwin"
+  },
+  {
+    "id": "sanju_samson",
+    "name": "Sanju Samson",
+    "category": "Cricketer",
+    "folder": "sanju_samson"
+  },
+  {
+    "id": "sanjay_dutt",
+    "name": "Sanjay Dutt",
+    "category": "Actor",
+    "folder": "sanjay_dutt"
+  },
+  {
+    "id": "nawazuddin_siddiqui",
+    "name": "Nawazuddin Siddiqui",
+    "category": "Actor",
+    "folder": "nawazuddin_siddiqui"
+  },
+  {
+    "id": "pankaj_tripathi",
+    "name": "Pankaj Tripathi",
+    "category": "Actor",
+    "folder": "pankaj_tripathi"
+  },
+  {
+    "id": "boman_irani",
+    "name": "Boman Irani",
+    "category": "Actor",
+    "folder": "boman_irani"
+  },
+  {
+    "id": "rajkummar_rao",
+    "name": "Rajkummar Rao",
+    "category": "Actor",
+    "folder": "rajkummar_rao"
+  },
+  {
+    "id": "deepika_padukone",
+    "name": "Deepika Padukone",
+    "category": "Actress",
+    "folder": "deepika_padukone"
+  },
+  {
+    "id": "alia_bhatt",
+    "name": "Alia Bhatt",
+    "category": "Actress",
+    "folder": "alia_bhatt"
+  },
+  {
+    "id": "katrina_kaif",
+    "name": "Katrina Kaif",
+    "category": "Actress",
+    "folder": "katrina_kaif"
+  },
+  {
+    "id": "priyanka_chopra",
+    "name": "Priyanka Chopra",
+    "category": "Actress",
+    "folder": "priyanka_chopra"
+  },
+  {
+    "id": "kareena_kapoor",
+    "name": "Kareena Kapoor",
+    "category": "Actress",
+    "folder": "kareena_kapoor"
+  },
+  {
+    "id": "anushka_sharma",
+    "name": "Anushka Sharma",
+    "category": "Actress",
+    "folder": "anushka_sharma"
+  },
+  {
+    "id": "shraddha_kapoor",
+    "name": "Shraddha Kapoor",
+    "category": "Actress",
+    "folder": "shraddha_kapoor"
+  },
+  {
+    "id": "kiara_advani",
+    "name": "Kiara Advani",
+    "category": "Actress",
+    "folder": "kiara_advani"
+  },
+  {
+    "id": "kriti_sanon",
+    "name": "Kriti Sanon",
+    "category": "Actress",
+    "folder": "kriti_sanon"
+  },
+  {
+    "id": "sara_ali_khan",
+    "name": "Sara Ali Khan",
+    "category": "Actress",
+    "folder": "sara_ali_khan"
+  },
+  {
+    "id": "janhvi_kapoor",
+    "name": "Janhvi Kapoor",
+    "category": "Actress",
+    "folder": "janhvi_kapoor"
+  },
+  {
+    "id": "ananya_panday",
+    "name": "Ananya Panday",
+    "category": "Actress",
+    "folder": "ananya_panday"
+  },
+  {
+    "id": "aishwarya_rai",
+    "name": "Aishwarya Rai",
+    "category": "Actress",
+    "folder": "aishwarya_rai"
+  },
+  {
+    "id": "madhuri_dixit",
+    "name": "Madhuri Dixit",
+    "category": "Actress",
+    "folder": "madhuri_dixit"
+  },
+  {
+    "id": "kajol",
+    "name": "Kajol",
+    "category": "Actress",
+    "folder": "kajol"
+  },
+  {
+    "id": "vidya_balan",
+    "name": "Vidya Balan",
+    "category": "Actress",
+    "folder": "vidya_balan"
+  },
+  {
+    "id": "disha_patani",
+    "name": "Disha Patani",
+    "category": "Actress",
+    "folder": "disha_patani"
+  },
+  {
+    "id": "jacqueline_fernandez",
+    "name": "Jacqueline Fernandez",
+    "category": "Actress",
+    "folder": "jacqueline_fernandez"
+  },
+  {
+    "id": "taapsee_pannu",
+    "name": "Taapsee Pannu",
+    "category": "Actress",
+    "folder": "taapsee_pannu"
+  },
+  {
+    "id": "bhumi_pednekar",
+    "name": "Bhumi Pednekar",
+    "category": "Actress",
+    "folder": "bhumi_pednekar"
+  },
+  {
+    "id": "triptii_dimri",
+    "name": "Triptii Dimri",
+    "category": "Actress",
+    "folder": "triptii_dimri"
+  },
+  {
+    "id": "tabu",
+    "name": "Tabu",
+    "category": "Actress",
+    "folder": "tabu"
+  },
+  {
+    "id": "allu_arjun",
+    "name": "Allu Arjun",
+    "category": "Actor",
+    "folder": "allu_arjun"
+  },
+  {
+    "id": "jr_ntr",
+    "name": "N. T. Rama Rao Jr.",
+    "category": "Actor",
+    "folder": "jr_ntr"
+  },
+  {
+    "id": "yash",
+    "name": "Yash",
+    "category": "Actor",
+    "folder": "yash"
+  },
+  {
+    "id": "kamal_haasan",
+    "name": "Kamal Haasan",
+    "category": "Actor",
+    "folder": "kamal_haasan"
+  },
+  {
+    "id": "vikram",
+    "name": "Chiyaan Vikram",
+    "category": "Actor",
+    "folder": "vikram"
+  },
+  {
+    "id": "vijay_sethupathi",
+    "name": "Vijay Sethupathi",
+    "category": "Actor",
+    "folder": "vijay_sethupathi"
+  },
+  {
+    "id": "silambarasan",
+    "name": "Silambarasan",
+    "category": "Actor",
+    "folder": "silambarasan"
+  },
+  {
+    "id": "mohanlal",
+    "name": "Mohanlal",
+    "category": "Actor",
+    "folder": "mohanlal"
+  },
+  {
+    "id": "mammootty",
+    "name": "Mammootty",
+    "category": "Actor",
+    "folder": "mammootty"
+  },
+  {
+    "id": "dulquer_salmaan",
+    "name": "Dulquer Salmaan",
+    "category": "Actor",
+    "folder": "dulquer_salmaan"
+  },
+  {
+    "id": "fahadh_faasil",
+    "name": "Fahadh Faasil",
+    "category": "Actor",
+    "folder": "fahadh_faasil"
+  },
+  {
+    "id": "tovino_thomas",
+    "name": "Tovino Thomas",
+    "category": "Actor",
+    "folder": "tovino_thomas"
+  },
+  {
+    "id": "prithviraj_sukumaran",
+    "name": "Prithviraj Sukumaran",
+    "category": "Actor",
+    "folder": "prithviraj_sukumaran"
+  },
+  {
+    "id": "rishab_shetty",
+    "name": "Rishab Shetty",
+    "category": "Actor",
+    "folder": "rishab_shetty"
+  },
+  {
+    "id": "rakshit_shetty",
+    "name": "Rakshit Shetty",
+    "category": "Actor",
+    "folder": "rakshit_shetty"
+  },
+  {
+    "id": "shiva_rajkumar",
+    "name": "Shiva Rajkumar",
+    "category": "Actor",
+    "folder": "shiva_rajkumar"
+  },
+  {
+    "id": "puneeth_rajkumar",
+    "name": "Puneeth Rajkumar",
+    "category": "Actor",
+    "folder": "puneeth_rajkumar"
+  },
+  {
+    "id": "vijay_deverakonda",
+    "name": "Vijay Deverakonda",
+    "category": "Actor",
+    "folder": "vijay_deverakonda"
+  },
+  {
+    "id": "nani",
+    "name": "Nani",
+    "category": "Actor",
+    "folder": "nani"
+  },
+  {
+    "id": "naga_chaitanya",
+    "name": "Naga Chaitanya",
+    "category": "Actor",
+    "folder": "naga_chaitanya"
+  },
+  {
+    "id": "chiranjeevi",
+    "name": "Chiranjeevi",
+    "category": "Actor",
+    "folder": "chiranjeevi"
+  },
+  {
+    "id": "nagarjuna",
+    "name": "Akkineni Nagarjuna",
+    "category": "Actor",
+    "folder": "nagarjuna"
+  },
+  {
+    "id": "arya",
+    "name": "Arya",
+    "category": "Actor",
+    "folder": "arya"
+  },
+  {
+    "id": "jayam_ravi",
+    "name": "Jayam Ravi",
+    "category": "Actor",
+    "folder": "jayam_ravi"
+  },
+  {
+    "id": "siddharth",
+    "name": "Siddharth",
+    "category": "Actor",
+    "folder": "siddharth"
+  },
+  {
+    "id": "rashmika_mandanna",
+    "name": "Rashmika Mandanna",
+    "category": "Actress",
+    "folder": "rashmika_mandanna"
+  },
+  {
+    "id": "pooja_hegde",
+    "name": "Pooja Hegde",
+    "category": "Actress",
+    "folder": "pooja_hegde"
+  },
+  {
+    "id": "kajal_aggarwal",
+    "name": "Kajal Aggarwal",
+    "category": "Actress",
+    "folder": "kajal_aggarwal"
+  },
+  {
+    "id": "tamannaah_bhatia",
+    "name": "Tamannaah Bhatia",
+    "category": "Actress",
+    "folder": "tamannaah_bhatia"
+  },
+  {
+    "id": "raashii_khanna",
+    "name": "Raashii Khanna",
+    "category": "Actress",
+    "folder": "raashii_khanna"
+  },
+  {
+    "id": "krithi_shetty",
+    "name": "Krithi Shetty",
+    "category": "Actress",
+    "folder": "krithi_shetty"
+  },
+  {
+    "id": "mrunal_thakur",
+    "name": "Mrunal Thakur",
+    "category": "Actress",
+    "folder": "mrunal_thakur"
+  },
+  {
+    "id": "kalyani_priyadarshan",
+    "name": "Kalyani Priyadarshan",
+    "category": "Actress",
+    "folder": "kalyani_priyadarshan"
+  },
+  {
+    "id": "parvathy_thiruvothu",
+    "name": "Parvathy Thiruvothu",
+    "category": "Actress",
+    "folder": "parvathy_thiruvothu"
+  },
+  {
+    "id": "manju_warrier",
+    "name": "Manju Warrier",
+    "category": "Actress",
+    "folder": "manju_warrier"
+  },
+  {
+    "id": "srinidhi_shetty",
+    "name": "Srinidhi Shetty",
+    "category": "Actress",
+    "folder": "srinidhi_shetty"
+  },
+  {
+    "id": "rukmini_vasanth",
+    "name": "Rukmini Vasanth",
+    "category": "Actress",
+    "folder": "rukmini_vasanth"
+  },
+  {
+    "id": "shriya_saran",
+    "name": "Shriya Saran",
+    "category": "Actress",
+    "folder": "shriya_saran"
+  },
+  {
+    "id": "hansika_motwani",
+    "name": "Hansika Motwani",
+    "category": "Actress",
+    "folder": "hansika_motwani"
+  },
+  {
+    "id": "aishwarya_rajesh",
+    "name": "Aishwarya Rajesh",
+    "category": "Actress",
+    "folder": "aishwarya_rajesh"
+  }
+]
