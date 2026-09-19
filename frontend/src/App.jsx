@@ -30,11 +30,60 @@ function WhatsAppIcon({ size = 16, className = "" }) {
   )
 }
 
-const shareToWhatsApp = (name, category, score) => {
-  const scorePct = Math.round(score * 100)
-  const text = `🤩 I just found my celebrity twin on CelebTwin!\n\n👑 *My Match: ${name}* (${category})\n🔥 *Similarity: ${scorePct}% Match*\n\nFind your celebrity twin: ${window.location.origin}`
-  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
-  window.open(url, '_blank')
+const shareAllMatches = async (matches) => {
+  if (!matches || matches.length === 0) return
+  const top = matches[0]
+  const topPct = Math.round(top.score * 100)
+  const appUrl = window.location.origin
+  const heroImageUrl = top.image ? `${API || appUrl}/celebrity-images/${top.image}` : ''
+
+  const lines = [
+    "🤩 *My Celebrity Doppelgängers on CelebTwin!*",
+    "",
+    `👑 *#1 Twin Match: ${top.name}* (${top.category})`,
+    `🔥 *Similarity: ${topPct}% Match*`,
+    "",
+    "✨ *My Top 5 Celebrity Lookalikes:*",
+  ]
+
+  const medals = ['🥇', '🥈', '🥉', '⭐️', '⭐️']
+  matches.slice(0, 5).forEach((m, idx) => {
+    lines.push(`${medals[idx]} ${idx + 1}. ${m.name} — ${Math.round(m.score * 100)}%`)
+  })
+
+  if (heroImageUrl) {
+    lines.push("")
+    lines.push(`📸 *${top.name}'s Photo:* ${heroImageUrl}`)
+  }
+  lines.push("")
+  lines.push(`👉 Find your celebrity twin here: ${appUrl}`)
+
+  const shareText = lines.join("\n")
+
+  // Try native Web Share with hero image file on mobile devices
+  try {
+    if (navigator.share && heroImageUrl) {
+      const response = await fetch(heroImageUrl)
+      const blob = await response.blob()
+      const fileName = `${top.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_twin.jpg`
+      const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' })
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `My Celebrity Twin: ${top.name} (${topPct}%)`,
+          text: shareText,
+          files: [file],
+        })
+        return
+      }
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') return
+  }
+
+  // Direct WhatsApp share fallback
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`
+  window.open(waUrl, '_blank')
 }
 
 // ─── celebrity pool for reel animation ─────────────────────────
@@ -199,16 +248,6 @@ function TopMatch({ match }) {
           </div>
         </div>
       </div>
-
-      {/* WhatsApp Share Button */}
-      <div className="p-2.5 bg-white/[0.02] border-t border-white/5">
-        <button
-          onClick={() => shareToWhatsApp(name, category, score)}
-          className="w-full py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 transition-all"
-        >
-          <WhatsAppIcon size={15} /> Share Twin on WhatsApp
-        </button>
-      </div>
     </motion.div>
   )
 }
@@ -221,7 +260,7 @@ function CompactMatch({ match, rank }) {
       initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.35, delay: rank * 0.08 }}
-      className="flex items-center gap-2.5 p-2.5 rounded-xl"
+      className="flex items-center gap-3 p-2.5 rounded-xl"
       style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
     >
       {/* rank */}
@@ -242,9 +281,9 @@ function CompactMatch({ match, rank }) {
       </div>
 
       {/* score bar */}
-      <div className="flex-shrink-0 flex flex-col items-end gap-1 min-w-[50px]">
+      <div className="flex-shrink-0 flex flex-col items-end gap-1 min-w-[56px]">
         <span className="text-xs font-bold text-violet-300">{pct(score)}%</span>
-        <div className="w-12 h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div className="w-14 h-1.5 rounded-full bg-white/10 overflow-hidden">
           <motion.div
             className="h-full rounded-full"
             style={{ background: 'linear-gradient(90deg, #7c3aed, #ec4899)' }}
@@ -254,15 +293,6 @@ function CompactMatch({ match, rank }) {
           />
         </div>
       </div>
-
-      {/* WhatsApp share for runner up */}
-      <button
-        onClick={() => shareToWhatsApp(name, category, score)}
-        title={`Share ${name} match on WhatsApp`}
-        className="w-7 h-7 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white flex items-center justify-center transition-all flex-shrink-0 active:scale-95"
-      >
-        <WhatsAppIcon size={13} />
-      </button>
     </motion.div>
   )
 }
@@ -526,15 +556,26 @@ function ResultsPanel({ state, matches, error, userSnap, onSpinComplete, onClose
                 </div>
               )}
 
-              {/* Action Button: Retake */}
-              {onReset && (
-                <button
-                  onClick={onReset}
-                  className="w-full mt-3 py-3 px-4 rounded-xl text-xs font-bold btn-primary flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20 active:scale-98 transition-transform"
+              {/* Bottom Actions: Share All 5 Matches + Scan Again */}
+              <div className="pt-2 space-y-2">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => shareAllMatches(matches)}
+                  className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/25 transition-all"
                 >
-                  <Camera size={15} /> Retake / Snap Another
-                </button>
-              )}
+                  <WhatsAppIcon size={17} /> Share All 5 Matches on WhatsApp
+                </motion.button>
+
+                {onReset && (
+                  <button
+                    onClick={onReset}
+                    className="w-full py-2.5 px-4 rounded-xl text-xs font-bold btn-primary flex items-center justify-center gap-2 shadow-md shadow-violet-500/20 active:scale-98 transition-transform"
+                  >
+                    <Camera size={14} /> Scan Face Again
+                  </button>
+                )}
+              </div>
 
               <p className="text-slate-600 text-[10px] text-center pt-2 pb-1">
                 Based on visual similarity · not identity recognition
