@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Camera, ZapOff, RefreshCw, Sparkles,
-  Star, Trophy, Info, AlertCircle, Loader2
+  Star, Trophy, Info, AlertCircle, Loader2, X
 } from 'lucide-react'
 
 // ─── constants ────────────────────────────────────────────────
@@ -377,12 +377,26 @@ function ReelSpinner({ targetMatch, onComplete }) {
 }
 
 // ─── Results Panel ─────────────────────────────────────────────
-function ResultsPanel({ state, matches, error, userSnap, onSpinComplete }) {
+function ResultsPanel({ state, matches, error, userSnap, onSpinComplete, onClose, onReset }) {
   return (
     <div className="flex flex-col h-full">
       {/* header */}
-      <div className="flex-shrink-0 px-5 pt-5 pb-3 border-b border-white/5">
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Your Matches</h2>
+      <div className="flex-shrink-0 px-5 pt-4 pb-3 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${state === 'spinning' ? 'bg-amber-400 animate-ping' : state === 'done' ? 'bg-emerald-400' : 'bg-violet-400'}`} />
+          <h2 className="text-xs font-bold text-slate-300 uppercase tracking-widest">
+            {state === 'done' ? 'Twin Found' : state === 'spinning' ? 'Scanning Stars…' : state === 'processing' ? 'Analyzing Face' : 'Your Matches'}
+          </h2>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center text-slate-300 hover:text-white transition-all"
+            aria-label="Close"
+          >
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {/* content */}
@@ -430,12 +444,20 @@ function ResultsPanel({ state, matches, error, userSnap, onSpinComplete }) {
           {/* error */}
           {state === 'error' && (
             <motion.div key="err" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="h-full flex flex-col items-center justify-center gap-4 text-center py-12">
+              className="h-full flex flex-col items-center justify-center gap-4 text-center py-8">
               <AlertCircle size={36} className="text-red-400" />
               <div>
                 <p className="text-red-300 font-medium mb-1">Could not process</p>
-                <p className="text-slate-500 text-sm">{error}</p>
+                <p className="text-slate-500 text-xs px-4">{error}</p>
               </div>
+              {onReset && (
+                <button
+                  onClick={onReset}
+                  className="mt-2 flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold btn-primary active:scale-95 transition-transform"
+                >
+                  <RefreshCw size={13} /> Try Again
+                </button>
+              )}
             </motion.div>
           )}
 
@@ -466,6 +488,16 @@ function ResultsPanel({ state, matches, error, userSnap, onSpinComplete }) {
                     ))}
                   </div>
                 </div>
+              )}
+
+              {/* Action Button: Retake */}
+              {onReset && (
+                <button
+                  onClick={onReset}
+                  className="w-full mt-3 py-3 px-4 rounded-xl text-xs font-bold btn-primary flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20 active:scale-98 transition-transform"
+                >
+                  <Camera size={15} /> Retake / Snap Another
+                </button>
               )}
 
               <p className="text-slate-600 text-[10px] text-center pt-2 pb-1">
@@ -583,7 +615,10 @@ function CameraPanel({ onMatch }) {
           display: camState === 'live' ? 'block' : 'none',
           transform: 'scaleX(-1)',  // mirror for selfie
         }}
-        playsInline muted
+        autoPlay
+        playsInline
+        webkit-playsinline="true"
+        muted
       />
 
       {/* idle / loading */}
@@ -612,21 +647,21 @@ function CameraPanel({ onMatch }) {
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse 60% 70% at 50% 40%, transparent 40%, rgba(4,4,8,0.6) 100%)' }} />
 
-          {/* face oval guide - exactly centered horizontally */}
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center"
-            style={{ paddingBottom: '40px' }}>
-            <div style={{
-              width: 260,
-              height: 350,
-              borderRadius: '50%',
-              border: '2.5px dashed rgba(167,139,250,0.7)',
-              boxShadow: '0 0 0 2000px rgba(4,4,8,0.38)',
-            }} />
+          {/* face oval guide - responsive for mobile & desktop */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center pb-12 sm:pb-8">
+            <div
+              className="w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none"
+              style={{
+                borderRadius: '50%',
+                border: '2.5px dashed rgba(167,139,250,0.7)',
+                boxShadow: '0 0 0 2000px rgba(4,4,8,0.38)',
+              }}
+            />
           </div>
 
           {/* hint */}
-          <div className="absolute top-4 left-0 right-0 flex justify-center pointer-events-none">
-            <span className="text-xs text-white/60 bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
+          <div className="absolute top-14 sm:top-4 left-0 right-0 flex justify-center pointer-events-none z-10 px-4 text-center">
+            <span className="text-[11px] sm:text-xs text-white/70 bg-black/50 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10">
               Center your face in the oval
             </span>
           </div>
@@ -635,26 +670,26 @@ function CameraPanel({ onMatch }) {
 
       {/* snap button */}
       {camState === 'live' && (
-        <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-3">
+        <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 flex flex-col items-center gap-2.5 z-20">
           <motion.button
             whileHover={!capturing ? { scale: 1.05 } : {}}
             whileTap={!capturing ? { scale: 0.95 } : {}}
             onClick={snapAndMatch}
             disabled={capturing}
-            className="relative"
+            className="relative touch-manipulation"
             aria-label="Snap and match"
           >
             {/* outer ring */}
-            <div className="w-20 h-20 rounded-full border-4 border-white/30 flex items-center justify-center">
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full border-4 border-white/30 flex items-center justify-center">
               {capturing
-                ? <Loader2 size={28} className="text-violet-300 animate-spin" />
-                : <div className="w-14 h-14 rounded-full btn-primary flex items-center justify-center shadow-xl">
+                ? <Loader2 size={26} className="text-violet-300 animate-spin" />
+                : <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full btn-primary flex items-center justify-center shadow-xl">
                     <Camera size={22} className="text-white" />
                   </div>
               }
             </div>
           </motion.button>
-          {!capturing && <p className="text-white/50 text-xs tracking-wide">Snap &amp; Match</p>}
+          {!capturing && <p className="text-white/60 text-[11px] sm:text-xs font-medium tracking-wide">Snap &amp; Match</p>}
         </div>
       )}
 
@@ -675,11 +710,13 @@ export default function App() {
   const [matches, setMatches]         = useState([])
   const [matchError, setMatchError]   = useState(null)
   const [userSnap, setUserSnap]       = useState(null)
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
 
   const handleMatch = async (file, snapUrl) => {
     setResultState('processing')
     setUserSnap(snapUrl)
     setMatchError(null)
+    setMobileSheetOpen(true) // auto-open bottom sheet on mobile when photo is snapped
 
     try {
       const form = new FormData()
@@ -704,36 +741,52 @@ export default function App() {
     }
   }
 
-  return (
-    <div className="flex h-screen w-screen overflow-hidden">
+  const handleReset = () => {
+    setResultState('idle')
+    setMobileSheetOpen(false)
+  }
 
-      {/* ── Left: Camera ── */}
-      <div className="relative flex-1 min-w-0">
+  return (
+    <div className="relative h-[100dvh] w-screen overflow-hidden flex flex-col md:flex-row bg-[#040408]">
+
+      {/* ── Camera View: Full screen on mobile, left column on desktop ── */}
+      <div className="relative flex-1 w-full h-full min-w-0">
         <CameraPanel onMatch={handleMatch} />
 
         {/* logo watermark */}
-        <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none z-10">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+        <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none z-20">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center shadow-lg"
             style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
             <Sparkles size={14} className="text-white" />
           </div>
-          <span className="text-white/80 text-xs font-bold tracking-wide" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <span className="text-white text-xs font-bold tracking-wide drop-shadow" style={{ fontFamily: 'Syne, sans-serif' }}>
             CelebTwin
           </span>
         </div>
+
+        {/* Mobile floating pill to reopen results if user closed sheet */}
+        {matches.length > 0 && !mobileSheetOpen && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            onClick={() => setMobileSheetOpen(true)}
+            className="md:hidden absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full glass border border-amber-400/40 text-amber-300 text-xs font-bold shadow-xl active:scale-95 transition-all"
+          >
+            <Trophy size={13} className="text-amber-400" />
+            <span>View Twin ({pct(matches[0].score)}%)</span>
+          </motion.button>
+        )}
       </div>
 
-      {/* ── Divider ── */}
-      <div className="w-px bg-white/5 flex-shrink-0 hidden md:block" />
-
-      {/* ── Right: Results ── */}
-      <div className="w-80 flex-shrink-0 glass flex flex-col" style={{ borderLeft: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* ── Desktop: Right Results Panel ── */}
+      <div className="hidden md:flex w-84 lg:w-96 flex-shrink-0 glass flex-col h-full z-10" style={{ borderLeft: '1px solid rgba(255,255,255,0.06)' }}>
         <ResultsPanel
           state={resultState}
           matches={matches}
           error={matchError}
           userSnap={userSnap}
           onSpinComplete={() => setResultState('done')}
+          onReset={handleReset}
         />
 
         {/* footer */}
@@ -747,8 +800,59 @@ export default function App() {
         </div>
       </div>
 
-      {/* ── Mobile: stack vertically (camera top, results bottom drawer) ── */}
-      {/* handled via responsive classes — on mobile the right panel becomes a bottom sheet */}
+      {/* ── Mobile: Smooth Slide-up Bottom Sheet ── */}
+      <AnimatePresence>
+        {mobileSheetOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                if (resultState === 'done' || resultState === 'error') {
+                  setMobileSheetOpen(false)
+                }
+              }}
+              className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-30"
+            />
+
+            {/* Bottom Sheet Modal */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+              className="md:hidden fixed inset-x-0 bottom-0 z-40 max-h-[86dvh] bg-[#0b0b16] border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden"
+            >
+              {/* drag handle pill */}
+              <div className="w-full flex justify-center pt-2.5 pb-1 flex-shrink-0">
+                <div className="w-10 h-1 rounded-full bg-white/25" />
+              </div>
+
+              {/* panel content */}
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <ResultsPanel
+                  state={resultState}
+                  matches={matches}
+                  error={matchError}
+                  userSnap={userSnap}
+                  onSpinComplete={() => setResultState('done')}
+                  onClose={() => setMobileSheetOpen(false)}
+                  onReset={handleReset}
+                />
+              </div>
+
+              {/* mobile footer */}
+              <div className="flex-shrink-0 px-5 py-2.5 bg-black/40 border-t border-white/5">
+                <p className="text-slate-600 text-[9px] text-center">
+                  Visual similarity estimate · Photos are not stored
+                </p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
