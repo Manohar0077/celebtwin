@@ -203,14 +203,14 @@ function TopMatch({ match }) {
       transition={{ duration: 0.5, ease: [0.34,1.56,0.64,1] }}
       className="glass rounded-2xl overflow-hidden border border-white/10 shadow-xl"
     >
-      {/* Celebrity image */}
-      <div className="relative h-52 bg-[#0e0e1e]">
+      {/* Celebrity image - long shot portrait */}
+      <div className="relative h-64 sm:h-72 bg-[#0e0e1e]">
         {image ? (
           <img
             src={`${API}/celebrity-images/${image}`}
             alt={name}
-            className="w-full h-full object-cover object-top"
-            style={{ objectPosition: 'center 20%' }}
+            className="w-full h-full object-cover"
+            style={{ objectPosition: 'center 12%' }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -377,7 +377,7 @@ function ReelSpinner({ targetMatch, onComplete }) {
                 src={`${API}/celebrity-images/${c.image}`}
                 alt={c.name}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: 'center 20%' }}
+                style={{ objectPosition: 'center 12%' }}
               />
               <div
                 className="absolute inset-0"

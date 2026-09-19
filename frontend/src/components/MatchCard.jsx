@@ -37,7 +37,8 @@ export default function MatchCard({ match, rank, isMain = false, delay = 0 }) {
             <img
               src={`/api/celebrity-image/${image}`}
               alt={name}
-              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              style={{ objectPosition: 'center 12%' }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-violet-900/50 to-pink-900/50">

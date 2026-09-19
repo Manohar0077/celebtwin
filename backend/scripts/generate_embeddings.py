@@ -43,7 +43,7 @@ def compute_celebrity_embedding(folder: Path) -> tuple[np.ndarray | None, str | 
     - Skips group photos (multiple faces with no dominant one)
     - Skips very small faces (< 65px)
     - Skips low-confidence detections (< 0.70)
-    - Picks the highest-quality face image as the display image
+    - Picks a natural long-shot / medium portrait as display image (shows head, shoulders & upper body)
     Returns (averaged_embedding, display_image_path) or (None, None).
     """
     images = [f for f in sorted(folder.iterdir()) if f.suffix.lower() in IMAGE_EXTS]
@@ -52,16 +52,34 @@ def compute_celebrity_embedding(folder: Path) -> tuple[np.ndarray | None, str | 
         return None, None
 
     embeddings = []
-    best_display = None
-    best_quality = 0.0
+    display_candidates = []
 
     for img_path in images:
+        img_bgr = cv2.imread(str(img_path))
+        if img_bgr is None:
+            continue
+        h, w = img_bgr.shape[:2]
         emb, quality = face_engine.get_clear_face_embedding(str(img_path), min_dim=65, min_det_score=0.70)
         if emb is not None:
             embeddings.append(emb)
-            if quality > best_quality:
-                best_quality = quality
-                best_display = f"{folder.name}/{img_path.name}"
+
+            # Check face bbox for long-shot score
+            faces = face_engine._app.get(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB))
+            if faces:
+                primary = sorted(faces, key=lambda x: (x.bbox[2]-x.bbox[0])*(x.bbox[3]-x.bbox[1]), reverse=True)[0]
+                b = primary.bbox
+                fw = b[2] - b[0]
+                fh = b[3] - b[1]
+                face_ratio = (fw * fh) / (w * h)
+                aspect = h / w
+
+                # Ideal face ratio is ~8% to 14% (classic medium/long portrait shot)
+                ratio_dist = abs(face_ratio - 0.10)
+                aspect_bonus = min(aspect, 1.6) * 0.4
+                close_penalty = (face_ratio - 0.25) * 20.0 if face_ratio > 0.25 else (0.03 - face_ratio) * 20.0 if face_ratio < 0.03 else 0.0
+                long_score = -(ratio_dist * 4.0) + aspect_bonus + (float(getattr(primary, 'det_score', 0)) * 0.3) - close_penalty
+
+                display_candidates.append((long_score, f"{folder.name}/{img_path.name}"))
         else:
             logger.debug("  Skipped %s (no clear single face)", img_path.name)
 
@@ -76,7 +94,14 @@ def compute_celebrity_embedding(folder: Path) -> tuple[np.ndarray | None, str | 
         return None, None
     averaged = avg / norm
 
-    logger.info("  ✓ %d/%d images used, display=%s", len(embeddings), len(images), best_display)
+    # Pick highest scoring long-shot image
+    if display_candidates:
+        display_candidates.sort(key=lambda x: x[0], reverse=True)
+        best_display = display_candidates[0][1]
+    else:
+        best_display = f"{folder.name}/{images[0].name}"
+
+    logger.info("  ✓ %d/%d images used, display=%s (long shot)", len(embeddings), len(images), best_display)
     return averaged, best_display
 
 
