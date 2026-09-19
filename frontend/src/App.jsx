@@ -20,6 +20,23 @@ const CATEGORY_MAP = {
 }
 const catStyle = (cat) => CATEGORY_MAP[cat] || { color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' }
 
+// ─── WhatsApp icon & share helper ─────────────────────────────
+function WhatsAppIcon({ size = 16, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.179-.175.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.895-.799-1.5-1.786-1.676-2.087-.175-.301-.019-.464.132-.614.136-.135.301-.351.451-.527.15-.175.2-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.678-1.634-.928-2.235-.244-.587-.492-.507-.678-.517-.175-.01-.376-.01-.577-.01-.2 0-.527.075-.803.376s-1.054 1.029-1.054 2.509 1.079 2.91 1.23 3.111c.15.2 2.124 3.243 5.145 4.549.719.311 1.28.497 1.718.636.722.23 1.378.197 1.898.121.579-.086 1.78-.727 2.03-1.43.251-.703.251-1.305.176-1.43-.075-.126-.276-.201-.577-.351z"/>
+      <path d="M12.04 2c-5.464 0-9.915 4.451-9.915 9.915 0 1.745.456 3.447 1.323 4.954L2 22.04l5.313-1.394c1.457.795 3.097 1.214 4.727 1.214 5.464 0 9.915-4.451 9.915-9.915 0-5.464-4.451-9.915-9.915-9.915zm0 18.067c-1.48 0-2.929-.398-4.195-1.15l-.301-.179-3.119.818.832-3.041-.196-.312a8.125 8.125 0 0 1-1.246-4.288c0-4.498 3.659-8.157 8.157-8.157 4.498 0 8.157 3.659 8.157 8.157 0 4.498-3.659 8.157-8.157 8.157z"/>
+    </svg>
+  )
+}
+
+const shareToWhatsApp = (name, category, score) => {
+  const scorePct = Math.round(score * 100)
+  const text = `🤩 I just found my celebrity twin on CelebTwin!\n\n👑 *My Match: ${name}* (${category})\n🔥 *Similarity: ${scorePct}% Match*\n\nFind your celebrity twin: ${window.location.origin}`
+  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
+  window.open(url, '_blank')
+}
+
 // ─── celebrity pool for reel animation ─────────────────────────
 const CELEB_POOL = [
   // South Indian Stars
@@ -134,7 +151,7 @@ function TopMatch({ match }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.34,1.56,0.64,1] }}
-      className="glass rounded-2xl overflow-hidden"
+      className="glass rounded-2xl overflow-hidden border border-white/10 shadow-xl"
     >
       {/* Celebrity image */}
       <div className="relative h-52 bg-[#0e0e1e]">
@@ -182,6 +199,16 @@ function TopMatch({ match }) {
           </div>
         </div>
       </div>
+
+      {/* WhatsApp Share Button */}
+      <div className="p-2.5 bg-white/[0.02] border-t border-white/5">
+        <button
+          onClick={() => shareToWhatsApp(name, category, score)}
+          className="w-full py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 transition-all"
+        >
+          <WhatsAppIcon size={15} /> Share Twin on WhatsApp
+        </button>
+      </div>
     </motion.div>
   )
 }
@@ -194,7 +221,7 @@ function CompactMatch({ match, rank }) {
       initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.35, delay: rank * 0.08 }}
-      className="flex items-center gap-3 p-2.5 rounded-xl"
+      className="flex items-center gap-2.5 p-2.5 rounded-xl"
       style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
     >
       {/* rank */}
@@ -215,9 +242,9 @@ function CompactMatch({ match, rank }) {
       </div>
 
       {/* score bar */}
-      <div className="flex-shrink-0 flex flex-col items-end gap-1 min-w-[56px]">
+      <div className="flex-shrink-0 flex flex-col items-end gap-1 min-w-[50px]">
         <span className="text-xs font-bold text-violet-300">{pct(score)}%</span>
-        <div className="w-14 h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div className="w-12 h-1.5 rounded-full bg-white/10 overflow-hidden">
           <motion.div
             className="h-full rounded-full"
             style={{ background: 'linear-gradient(90deg, #7c3aed, #ec4899)' }}
@@ -227,6 +254,15 @@ function CompactMatch({ match, rank }) {
           />
         </div>
       </div>
+
+      {/* WhatsApp share for runner up */}
+      <button
+        onClick={() => shareToWhatsApp(name, category, score)}
+        title={`Share ${name} match on WhatsApp`}
+        className="w-7 h-7 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white flex items-center justify-center transition-all flex-shrink-0 active:scale-95"
+      >
+        <WhatsAppIcon size={13} />
+      </button>
     </motion.div>
   )
 }
@@ -547,7 +583,10 @@ function CameraPanel({ onMatch }) {
   const streamRef = useRef(null)
   const [camState, setCamState] = useState('idle')   // idle | live | error
   const [camError, setCamError] = useState(null)
-  const [capturing, setCapturing] = useState(false)
+  const [scanning, setScanning] = useState(false)
+  const [scanProgress, setScanProgress] = useState(0) // 0 to 100
+  const [scanCount, setScanCount] = useState(0)       // 0 to 5
+  const [scanFlash, setScanFlash] = useState(false)
 
   const startCamera = async () => {
     setCamError(null)
@@ -584,24 +623,57 @@ function CameraPanel({ onMatch }) {
     return stopCamera
   }, [])
 
-  const snapAndMatch = async () => {
+  const scanAndMatch = async () => {
     const video = videoRef.current
-    if (!video || capturing) return
-    setCapturing(true)
+    if (!video || scanning) return
+    setScanning(true)
+    setScanProgress(0)
+    setScanCount(0)
 
-    // grab frame
-    const canvas = document.createElement('canvas')
-    canvas.width  = video.videoWidth
-    canvas.height = video.videoHeight
-    canvas.getContext('2d').drawImage(video, 0, 0)
+    const TOTAL_SHOTS = 5
+    const TOTAL_TIME_MS = 2500
+    const INTERVAL_MS = TOTAL_TIME_MS / TOTAL_SHOTS // 500ms
 
-    const snapUrl = canvas.toDataURL('image/jpeg', 0.92)
+    const capturedBlobs = []
+    let primarySnapUrl = null
 
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], 'snap.jpg', { type: 'image/jpeg' })
-      await onMatch(file, snapUrl)
-      setCapturing(false)
-    }, 'image/jpeg', 0.92)
+    // Continuous progress timer from 0% -> 100% over 2.5s
+    const startTime = Date.now()
+    const progressTimer = setInterval(() => {
+      const elapsed = Date.now() - startTime
+      const p = Math.min(99, Math.round((elapsed / TOTAL_TIME_MS) * 100))
+      setScanProgress(p)
+    }, 40)
+
+    for (let i = 0; i < TOTAL_SHOTS; i++) {
+      const canvas = document.createElement('canvas')
+      canvas.width  = video.videoWidth || 640
+      canvas.height = video.videoHeight || 480
+      canvas.getContext('2d').drawImage(video, 0, 0)
+
+      const snapUrl = canvas.toDataURL('image/jpeg', 0.92)
+      if (i === 0) primarySnapUrl = snapUrl
+
+      // Auditory click & visual shutter flash
+      playReelTick(520 + i * 45)
+      setScanFlash(true)
+      setTimeout(() => setScanFlash(false), 85)
+
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92))
+      capturedBlobs.push(blob)
+      setScanCount(i + 1)
+
+      if (i < TOTAL_SHOTS - 1) {
+        await new Promise(resolve => setTimeout(resolve, INTERVAL_MS))
+      }
+    }
+
+    clearInterval(progressTimer)
+    setScanProgress(100)
+
+    const files = capturedBlobs.map((blob, idx) => new File([blob], `snap_${idx + 1}.jpg`, { type: 'image/jpeg' }))
+    await onMatch(files, primarySnapUrl)
+    setScanning(false)
   }
 
   return (
@@ -647,57 +719,121 @@ function CameraPanel({ onMatch }) {
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse 60% 70% at 50% 40%, transparent 40%, rgba(4,4,8,0.6) 100%)' }} />
 
-          {/* face oval guide - responsive for mobile & desktop */}
+          {/* face oval guide - responsive with active laser scanning sweep */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center pb-12 sm:pb-8">
             <div
-              className="w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none"
+              className={`w-[210px] h-[285px] sm:w-[260px] sm:h-[350px] transition-all duration-300 pointer-events-none relative overflow-hidden ${
+                scanning
+                  ? 'border-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.7),0_0_0_2000px_rgba(4,4,8,0.45)]'
+                  : 'border-violet-400/70 shadow-[0_0_0_2000px_rgba(4,4,8,0.38)]'
+              }`}
               style={{
                 borderRadius: '50%',
-                border: '2.5px dashed rgba(167,139,250,0.7)',
-                boxShadow: '0 0 0 2000px rgba(4,4,8,0.38)',
+                borderWidth: '2.5px',
+                borderStyle: scanning ? 'solid' : 'dashed',
               }}
-            />
+            >
+              {/* Laser scanning beam */}
+              {scanning && (
+                <motion.div
+                  initial={{ top: '5%' }}
+                  animate={{ top: ['5%', '92%', '5%'] }}
+                  transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute left-2 right-2 h-1 bg-cyan-300 shadow-[0_0_15px_#22d3ee] rounded-full pointer-events-none"
+                />
+              )}
+            </div>
           </div>
 
-          {/* hint */}
-          <div className="absolute top-14 sm:top-4 left-0 right-0 flex justify-center pointer-events-none z-10 px-4 text-center">
-            <span className="text-[11px] sm:text-xs text-white/70 bg-black/50 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10">
-              Center your face in the oval
-            </span>
+          {/* Top Status Badge */}
+          <div className="absolute top-14 sm:top-5 left-0 right-0 flex justify-center pointer-events-none z-20 px-4">
+            {scanning ? (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/85 border border-cyan-400/60 backdrop-blur-md shadow-xl shadow-cyan-500/25"
+              >
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                <span className="text-cyan-200 text-xs font-black tracking-wider uppercase">
+                  Stay Still • Scanning Face
+                </span>
+              </motion.div>
+            ) : (
+              <span className="text-[11px] sm:text-xs text-white/70 bg-black/50 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10">
+                Center your face in the oval
+              </span>
+            )}
           </div>
         </>
       )}
 
-      {/* snap button */}
+      {/* Shutter Camera Flash */}
+      <AnimatePresence>
+        {scanFlash && (
+          <motion.div
+            initial={{ opacity: 0.7 }}
+            animate={{ opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+            className="absolute inset-0 bg-white pointer-events-none z-30"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Bottom Area: Controls or Scanning Progress HUD */}
       {camState === 'live' && (
-        <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 flex flex-col items-center gap-2.5 z-20">
-          <motion.button
-            whileHover={!capturing ? { scale: 1.05 } : {}}
-            whileTap={!capturing ? { scale: 0.95 } : {}}
-            onClick={snapAndMatch}
-            disabled={capturing}
-            className="relative touch-manipulation"
-            aria-label="Snap and match"
-          >
-            {/* outer ring */}
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full border-4 border-white/30 flex items-center justify-center">
-              {capturing
-                ? <Loader2 size={26} className="text-violet-300 animate-spin" />
-                : <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full btn-primary flex items-center justify-center shadow-xl">
+        <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 flex flex-col items-center z-20 px-6">
+          {scanning ? (
+            /* Gradual Progress Loader HUD */
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center gap-2 bg-[#090914]/90 border border-cyan-500/30 backdrop-blur-md px-6 py-3.5 rounded-2xl shadow-2xl w-full max-w-xs"
+            >
+              <div className="flex items-center justify-between w-full text-xs font-bold">
+                <span className="text-cyan-300 flex items-center gap-1.5">
+                  <Camera size={13} className="animate-pulse text-cyan-400" />
+                  Burst {scanCount}/5 Photos
+                </span>
+                <span className="text-white font-mono text-sm">{scanProgress}%</span>
+              </div>
+
+              {/* Progress bar */}
+              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${scanProgress}%`,
+                    background: 'linear-gradient(90deg, #22d3ee, #a855f7, #ec4899)'
+                  }}
+                />
+              </div>
+
+              <p className="text-[10px] text-slate-400 text-center font-medium">
+                Averaging 5 angles for highest accuracy
+              </p>
+            </motion.div>
+          ) : (
+            /* Snap Button */
+            <div className="flex flex-col items-center gap-2.5">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={scanAndMatch}
+                className="relative touch-manipulation"
+                aria-label="Scan face and match"
+              >
+                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full border-4 border-white/30 flex items-center justify-center">
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full btn-primary flex items-center justify-center shadow-xl">
                     <Camera size={22} className="text-white" />
                   </div>
-              }
+                </div>
+              </motion.button>
+              <p className="text-white/60 text-[11px] sm:text-xs font-medium tracking-wide">
+                Scan 5 Angles &amp; Match
+              </p>
             </div>
-          </motion.button>
-          {!capturing && <p className="text-white/60 text-[11px] sm:text-xs font-medium tracking-wide">Snap &amp; Match</p>}
-        </div>
-      )}
-
-      {/* re-snap hint after capturing */}
-      {capturing && (
-        <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs text-violet-300"
-          style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.4)' }}>
-          Analyzing…
+          )}
         </div>
       )}
     </div>
@@ -712,7 +848,7 @@ export default function App() {
   const [userSnap, setUserSnap]       = useState(null)
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
 
-  const handleMatch = async (file, snapUrl) => {
+  const handleMatch = async (files, snapUrl) => {
     setResultState('processing')
     setUserSnap(snapUrl)
     setMatchError(null)
@@ -720,7 +856,11 @@ export default function App() {
 
     try {
       const form = new FormData()
-      form.append('file', file)
+      if (Array.isArray(files)) {
+        files.forEach(f => form.append('files', f))
+      } else {
+        form.append('files', files)
+      }
 
       const res = await fetch(`${API}/api/match`, { method: 'POST', body: form })
       const data = await res.json()

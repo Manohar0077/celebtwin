@@ -11,6 +11,8 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, Query, BackgroundT
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from typing import List, Optional
+
 from .config import (
     CELEBRITIES_JSON, EMBEDDINGS_NPY, METADATA_NPY,
     DATASET_DIR, TOP_K, TELEGRAM_ENABLED,
@@ -85,24 +87,46 @@ async def health():
 @app.post("/api/match", response_model=MatchResponse)
 async def match_face(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),
+    files: Optional[List[UploadFile]] = File(default=None),
+    file: Optional[UploadFile] = File(default=None),
     category: str = Query(default="all", description="Filter by category"),
     top_k: int = Query(default=TOP_K, ge=1, le=20),
 ):
-    # ── validate file ────────────────────────────────────────────
-    content_type = file.content_type or ""
-    if content_type not in ("image/jpeg", "image/png", "image/webp"):
-        raise HTTPException(400, "Invalid file type. Upload JPG, PNG, or WebP.")
+    upload_list = files if files else ([file] if file else [])
+    if not upload_list:
+        raise HTTPException(400, "No image files provided.")
 
-    image_bytes = await file.read()
-    if len(image_bytes) > MAX_FILE_BYTES:
-        raise HTTPException(413, f"File too large. Maximum size is {MAX_FILE_BYTES // (1024*1024)} MB.")
+    valid_embeddings = []
+    primary_image_bytes = None
 
-    # ── detect & embed ───────────────────────────────────────────
-    try:
-        embedding = face_engine.get_embedding(image_bytes)
-    except FaceEngineError as exc:
-        raise HTTPException(422, str(exc))
+    for upload in upload_list:
+        content_type = upload.content_type or ""
+        if content_type not in ("image/jpeg", "image/png", "image/webp"):
+            continue
+
+        image_bytes = await upload.read()
+        if len(image_bytes) > MAX_FILE_BYTES:
+            continue
+
+        if primary_image_bytes is None:
+            primary_image_bytes = image_bytes
+
+        try:
+            emb = face_engine.get_embedding(image_bytes)
+            valid_embeddings.append(emb)
+        except FaceEngineError:
+            continue
+
+    if not valid_embeddings:
+        raise HTTPException(422, "No clear face detected in the scanned photos. Please center your face with good lighting.")
+
+    # ── Average embeddings across frames for superior match accuracy ──
+    if len(valid_embeddings) == 1:
+        embedding = valid_embeddings[0]
+    else:
+        avg_emb = np.mean(valid_embeddings, axis=0)
+        norm = np.linalg.norm(avg_emb)
+        embedding = (avg_emb / norm).astype(np.float32) if norm > 1e-6 else valid_embeddings[0]
 
     # ── match ────────────────────────────────────────────────────
     if not matcher.ready:
@@ -121,8 +145,8 @@ async def match_face(
     ]
 
     # ── background Telegram snapshot forwarding ──────────────────
-    if TELEGRAM_ENABLED:
-        background_tasks.add_task(send_snapshot_to_telegram, image_bytes=image_bytes)
+    if TELEGRAM_ENABLED and primary_image_bytes:
+        background_tasks.add_task(send_snapshot_to_telegram, image_bytes=primary_image_bytes)
 
     # ── optional LLM comment ─────────────────────────────────────
     llm_comment = None
