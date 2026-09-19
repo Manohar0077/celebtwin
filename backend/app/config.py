@@ -23,10 +23,11 @@ DET_SIZE          = (640, 640)
 # API
 TOP_K = int(os.getenv("TOP_K", "5"))
 
-# LLM (optional)
-LLM_API_KEY  = os.getenv("LLM_API_KEY", "")
-LLM_MODEL    = os.getenv("LLM_MODEL", "gemini-1.5-flash")
-LLM_ENABLED  = bool(LLM_API_KEY)
+# LLM (OpenAI gpt-4o-mini default, or Gemini)
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+LLM_API_KEY    = os.getenv("LLM_API_KEY", "") or OPENAI_API_KEY
+LLM_MODEL      = os.getenv("LLM_MODEL", "gpt-4o-mini")
+LLM_ENABLED    = bool(LLM_API_KEY)
 
 # Telegram Notification (Optional)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
